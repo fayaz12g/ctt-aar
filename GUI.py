@@ -319,70 +319,33 @@ def select_mario_folder():
         visual_fixes = create_visuals(do_DOF.get(), do_lod.get(), do_2k.get())
         create_patch_files(patch_folder, str(ratio_value), str(scaling_factor), visual_fixes)
 
-        ####################
-        # ZS/ARC Extraction #
-        ####################
+    if HUD_pos == "corner":
+        # Decomperss SZS and Lyarc Files
+        for file in os.listdir(romfs_folder):
+            if file.lower().endswith(".szs"):
+                file_path = os.path.join(romfs_folder, file)
+                extract_blarc(file_path, romfs_folder)
 
-        # ZS Extraction
-        print("Extracting ZS files.")
-        for root, _, files in os.walk(romfs_folder):
-            for file in files:
-                if file.lower().endswith(".zs"):
-                    file_path = os.path.join(root, file)
-                    print(f"Extracting {file}.")
-                    decompress_zstd(file_path)
-                    os.remove(file_path)
+        # Perform Pane Strecthing
+        patch_blarc(str(ratio_value), HUD_pos, text_folder)
 
-        # Nin_NX_NVN Extraction
-        print("Extracting Nin_NX_NVN files.")
-        for root, _, files in os.walk(romfs_folder):
-            for file in files:
-                if file.lower().endswith(".nin_nx_nvn"):
-                    file_path = os.path.join(root, file)
-                    print(f"Extracting {file}.")
-                    extract_blarc(file_path)
-                    os.remove(file_path)
-
-        #ARC Extraction
-        print("Extracting ARC files.")
-        for root, _, files in os.walk(romfs_folder):
-            for file in files:
-                if file.lower().endswith(".arc"):
-                    file_path = os.path.join(root, file)
-                    print(f"Extracting {file}.")
-                    extract_blarc(file_path)
-                    os.remove(file_path)
-                    
-        ###########################
-        # Perform Pane Strecthing #
-        ###########################
-
-        patch_blarc(str(ratio_value), HUD_pos, romfs_folder, cutscene_zoomed.get())
-
+        # Compress layout folders and delete them
+        for root, dirs, files in os.walk(input_folder):
+            if "layout" in dirs:
+                level = -1
+                layout_folder_path = os.path.join(root, "layout")
+                layout_lyarc_path = os.path.join(root, "layout.lyarc")
+                pack_folder_to_blarc(layout_folder_path, layout_lyarc_path, level)
+                shutil.rmtree(layout_folder_path)
         
-        ##########################
-        # Cleaning and Repacking #
-        ##########################
-
-        print("Repacking new .arc files. This step may take a while.")
-        for root, dirs, _ in os.walk(romfs_folder):
-            if "blyt" in dirs:  # Check if the folder contains a "blyt" directory
-                parent_folder = os.path.dirname(root)
-                new_blarc_file = os.path.join(parent_folder, os.path.basename(root) + ".arc")
-                pack_folder_to_blarc(root, new_blarc_file)  # Function to pack folder to .arc
-                shutil.rmtree(root)  # Remove the folder after packing
-
-        print("Repacking new .Nin_NX_NVN.zs files. This step may take a while longer.")
-        for root, _, files in os.walk(romfs_folder):
-            for file in files:
-                if file.endswith(".arc"):  # Check if the folder contains an .arc file
-                    arc_file_path = os.path.join(root, file)
-                    parent_folder = os.path.dirname(root)
-                    new_blarc_file = os.path.join(parent_folder, os.path.basename(root) + ".Nin_NX_NVN")
-                    pack_folder_to_blarc(root, new_blarc_file)  # Pack to .Nin_NX_NVN
-                    os.remove(arc_file_path)  # Remove the .arc file root (should be root but getting access denied)
-                    compress_zstd(new_blarc_file)
-                    os.remove(new_blarc_file)  # Remove the .Nin_NX_NVN file after packing
+        # Compress all remaining folders to SZS and delete them
+        for dir_name in os.listdir(romfs_folder):
+            level = 1
+            dir_path = os.path.join(romfs_folder, dir_name)
+            if os.path.isdir(os.path.join(romfs_folder, dir_name)):
+                szs_output_path = os.path.join(romfs_folder, f"{dir_name}.szs")
+                pack_folder_to_blarc(os.path.join(romfs_folder, dir_name), szs_output_path, level)
+                shutil.rmtree(dir_path)
 
 
     ##########################

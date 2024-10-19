@@ -26,8 +26,8 @@ def create_patch_files(patch_folder, ratio_value, scaling_factor, visual_fixes):
 @flag offset_shift 0x100
 
 @enabled
-0038e928 DE719C52 
-0038e92c 1E03A872
+0038e928 {hex_value1} 
+0038e92c {hex_value2}
 0038e930 C003271E
 @disabled
 

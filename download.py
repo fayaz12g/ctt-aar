@@ -16,7 +16,7 @@ def download_extract_copy(input_folder, mod_name):
     os.makedirs(directory_path, exist_ok=True)
 
     # Define the final extraction folder path
-    extract_folder = os.path.join(input_folder, mod_name, "romfs", "Layout")
+    extract_folder = os.path.join(input_folder, mod_name, "romfs", "LayoutData")
 
     # Remove the existing destination folder if it exists
     if os.path.exists(extract_folder):
