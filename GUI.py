@@ -41,12 +41,12 @@ from video import *
 tool_version = "1.0.0"
 
 root = customtkinter.CTk()
-root.title(f"Fayaz's Settings {tool_version} for Animal Crossing New Horizons")
+root.title(f"Fayaz's Settings {tool_version} for Captain Toad Treasure Tracker")
 root.geometry("540x760")
 
 customtkinter.set_appearance_mode("system")
 customtkinter.set_default_color_theme("blue")  
-windowtitle = customtkinter.CTkLabel(master=root, font=(CTkFont, 20), text="Fayaz's Animal Crossing New Horizons Utility {tool_version}")
+windowtitle = customtkinter.CTkLabel(master=root, font=(CTkFont, 20), text="Fayaz's Captain Toad Treasure Tracker Utility {tool_version}")
 
 ###############################################
 ###########    GLOBAL SETTINGS      ###########
@@ -283,7 +283,7 @@ def select_mario_folder():
         return
     text_folder = os.path.join(input_folder, mod_name)
     patch_folder = os.path.join(input_folder, mod_name, "exefs")
-    romfs_folder = os.path.join(input_folder, mod_name, "romfs")
+    romfs_folder = os.path.join(input_folder, mod_name, "romfs", "LayoutData")
     if corner_HUD.get() == True:
         print("Corner HUD")
         HUD_pos = "corner"
@@ -319,15 +319,14 @@ def select_mario_folder():
         visual_fixes = create_visuals(do_DOF.get(), do_lod.get(), do_2k.get())
         create_patch_files(patch_folder, str(ratio_value), str(scaling_factor), visual_fixes)
 
-    if HUD_pos == "corner":
         # Decomperss SZS and Lyarc Files
         for file in os.listdir(romfs_folder):
             if file.lower().endswith(".szs"):
                 file_path = os.path.join(romfs_folder, file)
-                extract_blarc(file_path, romfs_folder)
+                extract_blarc(file_path)
 
         # Perform Pane Strecthing
-        patch_blarc(str(ratio_value), HUD_pos, text_folder)
+        patch_blarc(str(ratio_value), HUD_pos, text_folder, cutscene_zoomed.get())
 
         # Compress layout folders and delete them
         for root, dirs, files in os.walk(input_folder):
@@ -335,7 +334,7 @@ def select_mario_folder():
                 level = -1
                 layout_folder_path = os.path.join(root, "layout")
                 layout_lyarc_path = os.path.join(root, "layout.lyarc")
-                pack_folder_to_blarc(layout_folder_path, layout_lyarc_path, level)
+                pack_folder_to_blarc(layout_folder_path, layout_lyarc_path)
                 shutil.rmtree(layout_folder_path)
         
         # Compress all remaining folders to SZS and delete them
@@ -344,7 +343,7 @@ def select_mario_folder():
             dir_path = os.path.join(romfs_folder, dir_name)
             if os.path.isdir(os.path.join(romfs_folder, dir_name)):
                 szs_output_path = os.path.join(romfs_folder, f"{dir_name}.szs")
-                pack_folder_to_blarc(os.path.join(romfs_folder, dir_name), szs_output_path, level)
+                pack_folder_to_blarc(os.path.join(romfs_folder, dir_name), szs_output_path)
                 shutil.rmtree(dir_path)
 
 
