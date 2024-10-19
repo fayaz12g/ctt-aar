@@ -258,7 +258,7 @@ def select_mario_folder():
     ratio_value = (int(numerator_entry.get()) / int(denominator_entry.get()))
     scaling_factor = (16/9) / (int(numerator_entry.get()) / int(denominator_entry.get()))
     username = getpass.getuser()
-    gameid = "01006F8002326000"
+    gameid = "01009BF0072D4000"
     if output_yuzu.get() is True:
         input_folder = f"C:/Users/{username}/AppData/Roaming/yuzu/load/{gameid}"
         process_name = "yuzu.exe"
@@ -587,7 +587,7 @@ notebook.add("Credits")
 
 credits_label = ClickableLabel(master=notebook.tab("Credits"), text=
                     ('Utility created by fayaz\n'
-                     'https://github.com/fayaz12g/acnh-aar\n'
+                     'https://github.com/fayaz12g/ctt-aar\n'
                      'ko-fi.com/fayaz12\n'
                      '\n\nWith thanks to\n'
                      'fruithapje21\n'
